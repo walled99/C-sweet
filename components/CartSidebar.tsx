@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { generateWhatsAppLink } from "@/lib/whatsappUtils";
+import { formatPriceWithUnit, formatPrice, unitLabels } from "@/lib/localization";
 import { useEffect, useState } from "react";
 
 export default function CartSidebar() {
@@ -38,13 +39,14 @@ export default function CartSidebar() {
             </div>
           ) : (
             <ul className="space-y-4">
-              {cart.map((item) => (
+              {cart.map((item) => {
+                const unitLabel = unitLabels[item.unit] || item.unit;
+                return (
                 <li key={item.id} className="flex items-start gap-4 border-b pb-4 last:border-0">
-                   {/* We could show image here too if we want, but name is fine */}
                    <div className="flex-1">
                      <h3 className="font-semibold text-primary-text">{item.name}</h3>
                      <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
-                        <span>{item.price} EGP / {item.unit}</span>
+                        <span>{formatPriceWithUnit(item.price, item.unit)}</span>
                      </div>
                      
                      <div className="mt-2 flex items-center gap-3">
@@ -70,12 +72,12 @@ export default function CartSidebar() {
                                 >+</button>
                             </div>
                         )}
-                        <span className="text-xs text-gray-500">{item.unit}</span>
+                        <span className="text-xs text-gray-500">{unitLabel}</span>
                      </div>
                    </div>
                    
                    <div className="flex flex-col items-end gap-2">
-                     <span className="font-bold text-accent">{item.price * item.qty} EGP</span>
+                     <span className="font-bold text-accent">{formatPrice(item.price * item.qty)}</span>
                      <button 
                        onClick={() => removeFromCart(item.id)}
                        className="text-red-500 hover:text-red-700"
@@ -84,7 +86,7 @@ export default function CartSidebar() {
                      </button>
                    </div>
                 </li>
-              ))}
+              )})}
             </ul>
           )}
         </div>
@@ -93,7 +95,7 @@ export default function CartSidebar() {
           <div className="border-t bg-gray-50 p-4">
             <div className="mb-4 flex justify-between text-lg font-bold text-primary">
               <span>المجموع:</span>
-              <span>{cartTotal} EGP</span>
+              <span>{formatPrice(cartTotal)}</span>
             </div>
             
             <a
@@ -111,3 +113,4 @@ export default function CartSidebar() {
     </div>
   );
 }
+

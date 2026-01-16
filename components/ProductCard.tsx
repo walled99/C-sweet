@@ -2,16 +2,19 @@
 
 import { useCart } from "@/context/CartContext";
 import { Product } from "@/types";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { formatPriceWithUnit, unitLabels } from "@/lib/localization";
+import { triggerFlyToCart } from "./FlyToCart";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const { addToCart } = useCart();
+  const { addToCart, triggerCartBounce } = useCart();
   const [qty, setQty] = useState(product.minOrder || (product.unit === 'kg' ? 1 : 1));
+  const [isAdded, setIsAdded] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleIncrement = () => {
     setQty((prev) => {
       const step = product.step || 1;
-      // precision fix
       return parseFloat((prev + step).toFixed(2));
     });
   };
@@ -32,6 +35,25 @@ export default function ProductCard({ product }: { product: Product }) {
     }
   };
 
+  const handleAddToCart = () => {
+    addToCart(product, qty);
+    setIsAdded(true);
+
+    // Trigger fly-to-cart animation
+    if (buttonRef.current) {
+      triggerFlyToCart(buttonRef.current);
+    }
+    
+    // Trigger cart bounce after fly animation lands
+    setTimeout(() => {
+      triggerCartBounce();
+    }, 450);
+
+    setTimeout(() => setIsAdded(false), 1500);
+  };
+
+  const unitLabel = unitLabels[product.unit] || product.unit;
+
   return (
     <div className="group relative overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg">
       <div className="aspect-square w-full overflow-hidden bg-gray-100">
@@ -45,14 +67,14 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="p-4">
         <div className="flex items-start justify-between">
           <h3 className="text-lg font-bold text-primary-text">{product.name}</h3>
-          <span className="rounded-full bg-accent/20 px-2 py-1 text-xs font-bold text-accent-foreground text-primary">
-            {product.price} EGP / {product.unit}
+          <span className="rounded-full bg-accent/20 px-2 py-1 text-xs font-bold text-primary">
+            {formatPriceWithUnit(product.price, product.unit)}
           </span>
         </div>
         
         <div className="mt-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-                <label className="text-sm text-gray-500">الكمية ({product.unit}):</label>
+                <label className="text-sm text-gray-500">الكمية ({unitLabel}):</label>
                 <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-1">
                     <button 
                         onClick={handleDecrement}
@@ -74,13 +96,19 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
 
             <button
-                onClick={() => addToCart(product, qty)}
-                className="w-full rounded-lg bg-primary py-2 font-bold text-secondary transition hover:bg-primary/90 active:scale-95"
+                ref={buttonRef}
+                onClick={handleAddToCart}
+                disabled={isAdded}
+                className={`w-full rounded-lg py-2 font-bold text-secondary transition active:scale-95 ${
+                  isAdded ? 'bg-green-600' : 'bg-primary hover:bg-primary/90'
+                }`}
             >
-                أضف إلى السلة
+                {isAdded ? 'تمت الإضافة ✓' : 'أضف إلى السلة'}
             </button>
         </div>
       </div>
     </div>
   );
 }
+
+

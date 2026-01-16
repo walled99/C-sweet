@@ -1,11 +1,10 @@
 "use client";
 
-
 import { useCart } from "@/context/CartContext";
-
+import { motion } from "framer-motion";
 
 export default function Header() {
-  const { itemsCount, openCart } = useCart();
+  const { itemsCount, openCart, cartIconRef, isBouncing } = useCart();
 
   return (
     <header className="sticky top-0 z-40 w-full bg-primary text-secondary shadow-md">
@@ -16,8 +15,11 @@ export default function Header() {
         </div>
 
         {/* Cart Trigger */}
-        <button
+        <motion.button
+          ref={cartIconRef}
           onClick={openCart}
+          animate={isBouncing ? { scale: [1, 1.3, 1] } : {}}
+          transition={{ duration: 0.4 }}
           className="relative flex items-center gap-2 rounded-full bg-primary-text/10 px-4 py-2 transition hover:bg-primary-text/20"
         >
           <span className="sr-only">Open Cart</span>
@@ -39,8 +41,9 @@ export default function Header() {
           </svg>
           
           <span className="font-semibold">{itemsCount}</span>
-        </button>
+        </motion.button>
       </div>
     </header>
   );
 }
+

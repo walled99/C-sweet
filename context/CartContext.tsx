@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
 import { Product, CartItem } from "@/types";
 
 interface CartContextType {
@@ -14,6 +14,9 @@ interface CartContextType {
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
+  cartIconRef: React.RefObject<HTMLButtonElement | null>;
+  triggerCartBounce: () => void;
+  isBouncing: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -22,9 +25,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isBouncing, setIsBouncing] = useState(false);
+  const cartIconRef = useRef<HTMLButtonElement | null>(null);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
+  
+  const triggerCartBounce = () => {
+    setIsBouncing(true);
+    setTimeout(() => setIsBouncing(false), 500);
+  };
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -54,18 +64,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Validate step logic for weight items
       let validQty = qty;
       if (product.unit === 'kg' && product.step) {
-         // Ensure it's a multiple of step, roughly (floating point tolerance)
          const step = product.step;
          const remainder = validQty % step;
          if (remainder > 0.001 && Math.abs(remainder - step) > 0.001) {
-            // It's not a multiple, enforce strictness or update caller? 
-            // For now, let's assume caller handles UI steps, but we sanitize here just in case 
-            // by rounding to nearest step
              validQty = Math.round(validQty / step) * step;
          }
       }
       
-      setIsCartOpen(true); // Auto open cart on add
+      // No auto-open; fly-to-cart animation handles feedback
 
       if (existing) {
         return prev.map((item) =>
@@ -93,7 +99,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clearCart = () => setCart([]);
 
   const cartTotal = cart.reduce((total, item) => total + item.price * item.qty, 0);
-  const itemsCount = cart.length; // Distinct items count
+  const itemsCount = cart.length;
 
   return (
     <CartContext.Provider
@@ -108,12 +114,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isCartOpen,
         openCart,
         closeCart,
+        cartIconRef,
+        triggerCartBounce,
+        isBouncing,
       }}
     >
       {children}
     </CartContext.Provider>
   );
 }
+
 
 export function useCart() {
   const context = useContext(CartContext);
