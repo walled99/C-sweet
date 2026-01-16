@@ -1,47 +1,99 @@
-# AI Context: C-Sweet Shop E-Commerce
+# AI_CONTEXT.md — C-Sweet Shop System Prompt
 
 > [!IMPORTANT]
-> This document serves as the Source of Truth for all AI-generated code. Strict adherence to these patterns is required to maintain architectural integrity.
+> **READ THIS ENTIRE FILE BEFORE WRITING ANY CODE.**
+> This document is the architectural contract for all AI-generated code in this project.
 
-## 1. Project Identity & Stack
-- **Framework**: Next.js 16 (App Router).
-- **Language**: TypeScript (Strict Mode).
-- **Styling**: Tailwind CSS.
-- **Render Strategy**:
-    - **Server Components**: Default for Pages, Layouts, and Data Fetching (SEO & Performance).
-    - **Client Components**: Specific interactive elements (Cart, Inputs) using `"use client"`.
+---
 
-## 2. Design System & RTL Architecture
-**Primary Constraint**: Application is Arabic-First (RTL).
-- **Logical Properties**: ALWAYS use `start`/`end` instead of `left`/`right`.
-    - Correct: `ms-4` (margin-start), `text-start`, `border-s`.
-    - Incorrect: `ml-4`, `text-left`, `border-l`.
+## 1. Project Identity
 
-### Color Palette
-- **Primary (Dark Cherry)**: `#561c24` (Headers, CTA Buttons).
-- **Secondary (Cream)**: `#e8d8c4` (Backgrounds, Containers).
-- **Accent (Gold)**: `#c5a35d` (Highlights, Price Tags).
+| Key | Value |
+|-----|-------|
+| Name | C-Sweet Shop |
+| Type | E-Commerce MVP |
+| Framework | Next.js 16+ (App Router) |
+| Language | TypeScript (Strict) |
+| Styling | Tailwind CSS 4 |
+| UI Direction | RTL (Arabic-First) |
+| Checkout | WhatsApp Integration |
 
-## 3. Data Schema (The Contract)
-> [!NOTE]
-> All product data must strictly adhere to the following interface.
+---
 
+## 2. Directory Structure
+
+```
+e:/C-Sweet/
+├── app/                    # Next.js App Router (Routes & Layouts ONLY)
+│   ├── layout.tsx          # Root Layout (RTL, Font, Providers)
+│   ├── page.tsx            # Home Page (Product Grid)
+│   └── globals.css         # Tailwind Theme Config
+├── components/             # UI Components
+│   ├── Header.tsx          # Sticky header with cart icon (uses Framer Motion)
+│   ├── CartSidebar.tsx     # Slide-over cart panel
+│   ├── ProductCard.tsx     # Product display with qty selector
+│   └── FlyToCart.tsx       # Fly-to-cart animation portal
+├── context/
+│   └── CartContext.tsx     # Cart state management + localStorage
+├── lib/
+│   ├── data.ts             # Static product data (replace with API later)
+│   ├── localization.ts     # Arabic unit/currency labels
+│   └── whatsappUtils.ts    # WhatsApp message generator
+├── types/
+│   └── index.ts            # TypeScript interfaces (Product, CartItem)
+└── public/images/          # Product images
+```
+
+---
+
+## 3. Design System
+
+### 3.1 Colors (Tailwind Theme)
+Defined in `app/globals.css`:
+```css
+--color-primary: #561c24;      /* Dark Cherry — Headers, Buttons */
+--color-secondary: #e8d8c4;    /* Cream — Backgrounds */
+--color-accent: #c5a35d;       /* Gold — Highlights, Prices */
+--color-primary-text: #3d141a; /* Deep Brown — Body Text */
+```
+
+### 3.2 RTL Rules
+> [!CAUTION]
+> **NEVER use `left`/`right` properties. ALWAYS use logical properties.**
+
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
+| `ml-4` | `ms-4` |
+| `mr-4` | `me-4` |
+| `text-left` | `text-start` |
+| `text-right` | `text-end` |
+| `left-0` | `inset-inline-start-0` |
+| `right-0` | `inset-inline-end-0` |
+
+### 3.3 Font
+- **Family**: Cairo (Arabic + Latin)
+- **Variable**: `--font-cairo`
+- **Applied via**: `font-sans` utility
+
+---
+
+## 4. Data Schema
+
+### 4.1 Types (`types/index.ts`)
 ```typescript
 type Category = 'sweet' | 'supermarket' | 'freezing' | 'cheese_milk';
 type Unit = 'kg' | 'g' | 'piece' | 'pack';
 
 interface Product {
   id: string;
-  name: string; // Arabic Only
-  price: number;
+  name: string;        // Arabic ONLY
+  price: number;       // Price per unit
   category: Category;
   imageUrl: string;
   isAvailable: boolean;
-  
-  // Unit Logic
-  unit: Unit;        // Determines availability of decimal inputs
-  minOrder?: number; // e.g. 0.25 for kg
-  step?: number;     // e.g. 0.25 for increments
+  unit: Unit;
+  minOrder?: number;   // e.g., 0.25 for kg
+  step?: number;       // e.g., 0.25 for increments
 }
 
 interface CartItem extends Product {
@@ -49,32 +101,135 @@ interface CartItem extends Product {
 }
 ```
 
-## 4. Business Logic (Checkout Flow)
-**Integration**: WhatsApp Business API (URL Scheme).
-**Recipient**: `01127666232` (+20 Egypt Code).
+### 4.2 Unit Logic
+- `kg` / `g`: Decimal quantities allowed. Use `step` for increments.
+- `piece` / `pack`: Integer quantities only.
 
-### Message Generation Protocol
-Location: `lib/whatsappUtils.ts`
-Format:
+---
+
+## 5. Localization (`lib/localization.ts`)
+
+> [!IMPORTANT]
+> **ALL user-facing text must use Arabic labels. Internal keys remain English.**
+
+### 5.1 Mapping
+```typescript
+const unitLabels = {
+  kg: 'كجم',
+  g: 'جرام',
+  piece: 'قطعة',
+  pack: 'عبوة',
+};
+const currencyLabel = 'ج.م';
+```
+
+### 5.2 Helper Functions
+```typescript
+formatPrice(price: number): string
+// Returns: "120 ج.م"
+
+formatPriceWithUnit(price: number, unit: string): string
+// Returns: "120 ج.م / كجم"
+
+formatQuantity(qty: number, unit: string): string
+// Returns: "0.5 كجم" or "2 قطعة"
+```
+
+---
+
+## 6. State Management (`context/CartContext.tsx`)
+
+### 6.1 Provided Values
+```typescript
+interface CartContextType {
+  cart: CartItem[];
+  addToCart: (product: Product, qty: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, qty: number) => void;
+  clearCart: () => void;
+  cartTotal: number;
+  itemsCount: number;
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
+  cartIconRef: React.RefObject<HTMLButtonElement | null>;
+  triggerCartBounce: () => void;
+  isBouncing: boolean;
+}
+```
+
+### 6.2 Persistence
+- Storage Key: `c-sweet-cart`
+- Sync: On mount (load) and on every cart change (save).
+
+---
+
+## 7. Animation System (`components/FlyToCart.tsx`)
+
+### 7.1 Fly-to-Cart Flow
+1. User clicks "Add to Cart" button.
+2. `triggerFlyToCart(buttonRef)` dispatches custom event with button position.
+3. `FlyToCartPortal` listens, creates a flying `<motion.div>`.
+4. Animation: Button position → Cart icon position (500ms).
+5. On land: `triggerCartBounce()` scales cart icon (bounce effect).
+
+### 7.2 Button Feedback
+- On click: Text changes to `تمت الإضافة ✓` (green) for 1500ms.
+- Then reverts to `أضف إلى السلة`.
+
+### 7.3 Dependencies
+- **Framer Motion**: `motion`, `AnimatePresence` from `framer-motion`.
+
+---
+
+## 8. WhatsApp Checkout (`lib/whatsappUtils.ts`)
+
+### 8.1 Configuration
+- **Recipient**: `201127666232` (Egypt +20)
+
+### 8.2 Message Format
 ```text
 مرحبا، طلب جديد من الموقع:
-- Item Name (Qty Unit) - Total Price EGP
-...
-Total: X EGP
+- جبنة بيضاء (0.5 كجم) - 60 ج.م
+- مناقيش زعتر (2 قطعة) - 30 ج.م
+
+المجموع: 90 ج.م
 ```
-> [!WARNING]
-> Ensure all text in the generated message is URL-encoded properly.
 
-## 5. Development Patterns
+### 8.3 URL Generation
+```typescript
+generateWhatsAppLink(cart: CartItem[], total: number): string
+// Returns: https://wa.me/201127666232?text=...
+```
 
-### Directory Structure Rules
-- `app/`: Routes and Layouts only.
-- `components/`: Reusable UI components.
-- `lib/`: Utilities and Static Data (`data.ts`, `whatsappUtils.ts`).
-- `context/`: React Context Providers (`CartContext.tsx`).
-- `types/`: Shared TypeScript definitions.
+---
 
-### State Management
-- **Cart**: Managed via strict React Context (`CartProvider`).
-- **Persistence**: `localStorage` sync required on mount/update.
-- **Reactivity**: `Header` counts and `CartSidebar` must instantly reflect changes.
+## 9. Component Responsibilities
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| `Header` | Client | Logo + Cart icon (with bounce animation) |
+| `CartSidebar` | Client | Cart items list + WhatsApp checkout |
+| `ProductCard` | Client | Product display + qty selector + fly animation |
+| `FlyToCartPortal` | Client | Renders flying elements on add-to-cart |
+| `app/page.tsx` | Server | Product grid (SEO optimized) |
+| `app/layout.tsx` | Server | Root layout with providers |
+
+---
+
+## 10. Commands
+
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run lint     # ESLint check
+```
+
+---
+
+## 11. Future Considerations
+- [ ] Replace `lib/data.ts` with API/CMS fetch.
+- [ ] Add category filtering.
+- [ ] Implement search functionality.
+- [ ] Add order history (requires backend).
+
