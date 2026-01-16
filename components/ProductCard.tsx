@@ -3,37 +3,15 @@
 import { useCart } from "@/context/CartContext";
 import { Product } from "@/types";
 import { useState, useRef } from "react";
-import { formatPriceWithUnit, unitLabels } from "@/lib/localization";
+import { formatPriceWithUnit } from "@/lib/localization";
 import { triggerFlyToCart } from "./FlyToCart";
+import QuantitySelector from "./QuantitySelector";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart, triggerCartBounce } = useCart();
-  const [qty, setQty] = useState(product.minOrder || (product.unit === 'kg' ? 1 : 1));
+  const [qty, setQty] = useState(product.minOrder);
   const [isAdded, setIsAdded] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const handleIncrement = () => {
-    setQty((prev) => {
-      const step = product.step || 1;
-      return parseFloat((prev + step).toFixed(2));
-    });
-  };
-
-  const handleDecrement = () => {
-    setQty((prev) => {
-      const step = product.step || 1;
-      const min = product.minOrder || step;
-      if (prev - step < min) return prev;
-      return parseFloat((prev - step).toFixed(2));
-    });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseFloat(e.target.value);
-    if (!isNaN(val)) {
-        setQty(val);
-    }
-  };
 
   const handleAddToCart = () => {
     addToCart(product, qty);
@@ -51,8 +29,6 @@ export default function ProductCard({ product }: { product: Product }) {
 
     setTimeout(() => setIsAdded(false), 1500);
   };
-
-  const unitLabel = unitLabels[product.unit] || product.unit;
 
   return (
     <div className="group relative overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg">
@@ -73,27 +49,11 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         
         <div className="mt-4 flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-                <label className="text-sm text-gray-500">الكمية ({unitLabel}):</label>
-                <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-1">
-                    <button 
-                        onClick={handleDecrement}
-                        className="p-1 px-2 text-lg text-primary hover:bg-white rounded"
-                    >-</button>
-                    <input 
-                        type="number"
-                        min={product.minOrder || product.step || 1}
-                        step={product.step || 1}
-                        value={qty}
-                        onChange={handleChange}
-                        className="w-16 bg-transparent text-center font-bold focus:outline-none"
-                    />
-                    <button 
-                        onClick={handleIncrement}
-                        className="p-1 px-2 text-lg text-primary hover:bg-white rounded"
-                    >+</button>
-                </div>
-            </div>
+            <QuantitySelector 
+              product={product} 
+              value={qty} 
+              onChange={setQty} 
+            />
 
             <button
                 ref={buttonRef}
@@ -110,5 +70,6 @@ export default function ProductCard({ product }: { product: Product }) {
     </div>
   );
 }
+
 
 

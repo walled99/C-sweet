@@ -10,8 +10,8 @@ export interface Product {
   imageUrl: string;
   isAvailable: boolean;
   unit: Unit;
-  minOrder?: number; // e.g. 0.25 for kg
-  step?: number;     // e.g. 0.25 for increments
+  minOrder: number; // Required: e.g., 0.25 for kg, 1 for piece
+  step: number;     // Required: e.g., 0.25 for kg, 1 for piece
 }
 
 export interface CartItem extends Product {

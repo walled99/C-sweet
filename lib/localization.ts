@@ -24,9 +24,12 @@ export function formatPriceWithUnit(price: number, unit: string): string {
 }
 
 /**
- * Format quantity with Arabic unit label
+ * Format quantity with Arabic unit label (removes trailing zeros)
  */
 export function formatQuantity(qty: number, unit: string): string {
   const unitLabel = unitLabels[unit] || unit;
-  return `${qty} ${unitLabel}`;
+  // Remove trailing zeros for clean display (e.g., "0.500" → "0.5")
+  const formattedQty = Number(qty).toString();
+  return `${formattedQty} ${unitLabel}`;
 }
+

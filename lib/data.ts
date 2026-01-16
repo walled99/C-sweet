@@ -16,10 +16,11 @@ export const products: Product[] = [
     id: "2",
     name: "مناقيش زعتر", // Manakish Zaatar
     price: 15,
-    category: "sweet", // Technically bakery but under sweet/pastry for now or adding new category later
+    category: "sweet",
     imageUrl: "/images/manakish.png",
     isAvailable: true,
     unit: "piece",
+    minOrder: 1,
     step: 1
   }
 ];
