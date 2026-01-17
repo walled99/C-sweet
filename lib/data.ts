@@ -29,7 +29,7 @@ export const products: Product[] = [
     name: "حليب كامل الدسم", // Full Cream Milk
     price: 45,
     category: "cheese_milk",
-    imageUrl: "/images/milk.jpg",
+    imageUrl: "/images/Milk.jpg",
     isAvailable: true,
     unit: "pack",
     minOrder: 1,
@@ -77,7 +77,7 @@ export const products: Product[] = [
     name: "أرز مصري (1 كجم)", // Egyptian Rice
     price: 35,
     category: "supermarket",
-    imageUrl: "/images/rice.jpg",
+    imageUrl: "/images/Rice.jpg",
     isAvailable: true,
     unit: "pack",
     minOrder: 1,
@@ -88,7 +88,7 @@ export const products: Product[] = [
     name: "ملوخية مجمدة", // Frozen Molokhia
     price: 15,
     category: "freezing",
-    imageUrl: "/images/molokhia.jpg",
+    imageUrl: "/images/Molokhia.jpg",
     isAvailable: true,
     unit: "pack",
     minOrder: 1,
