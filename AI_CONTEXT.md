@@ -42,6 +42,7 @@ e:/C-Sweet/
 ├── types/
 │   └── index.ts            # TypeScript interfaces (Product, CartItem)
 └── public/images/          # Product images
+    └── logo.png            # Header logo (120x48px)
 ```
 
 ---
