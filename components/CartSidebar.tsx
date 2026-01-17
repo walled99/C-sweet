@@ -4,6 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { generateWhatsAppLink } from "@/lib/whatsappUtils";
 import { formatPriceWithUnit, formatPrice, unitLabels } from "@/lib/localization";
 import { useEffect, useState } from "react";
+import QuantitySelector from "./QuantitySelector";
 
 export default function CartSidebar() {
   const { cart, removeFromCart, updateQuantity, cartTotal, isCartOpen, closeCart } = useCart();
@@ -45,34 +46,13 @@ export default function CartSidebar() {
                 <li key={item.id} className="flex items-start gap-4 border-b pb-4 last:border-0">
                    <div className="flex-1">
                      <h3 className="font-semibold text-primary-text">{item.name}</h3>
-                     <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
-                        <span>{formatPriceWithUnit(item.price, item.unit)}</span>
-                     </div>
                      
-                     <div className="mt-2 flex items-center gap-3">
-                        {item.unit === 'kg' ? (
-                            <input 
-                                type="number" 
-                                step={item.step || 0.25}
-                                min={item.step || 0.25}
-                                value={item.qty}
-                                onChange={(e) => updateQuantity(item.id, parseFloat(e.target.value))}
-                                className="w-20 rounded border p-1 text-center"
-                            />
-                        ) : (
-                            <div className="flex items-center gap-2 rounded border">
-                                <button 
-                                    onClick={() => updateQuantity(item.id, item.qty - 1)}
-                                    className="px-2 py-1 hover:bg-gray-100"
-                                >-</button>
-                                <span className="w-8 text-center">{item.qty}</span>
-                                <button 
-                                    onClick={() => updateQuantity(item.id, item.qty + 1)}
-                                    className="px-2 py-1 hover:bg-gray-100"
-                                >+</button>
-                            </div>
-                        )}
-                        <span className="text-xs text-gray-500">{unitLabel}</span>
+                     <div className="mt-2 flex items-center justify-between">
+                        <QuantitySelector 
+                          product={item} 
+                          value={item.qty} 
+                          onChange={(val) => updateQuantity(item.id, val)}
+                        />
                      </div>
                    </div>
                    

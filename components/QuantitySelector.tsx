@@ -10,8 +10,6 @@ interface QuantitySelectorProps {
 }
 
 export default function QuantitySelector({ product, value, onChange }: QuantitySelectorProps) {
-  const isWeight = product.unit === 'kg';
-  const quickWeights = [0.25, 0.5, 1];
 
   const handleDecrement = () => {
     const newValue = Math.max(product.minOrder, parseFloat((value - product.step).toFixed(2)));
@@ -24,27 +22,7 @@ export default function QuantitySelector({ product, value, onChange }: QuantityS
 
   return (
     <div className="flex flex-col gap-3">
-      {/* 1. Quick Selectors for KG */}
-      {isWeight && (
-        <div className="flex gap-2 justify-center">
-          {quickWeights.map((w) => (
-            <button
-              key={w}
-              type="button"
-              onClick={() => onChange(w)}
-              className={`px-3 py-1 rounded-full text-sm border transition-all ${
-                value === w 
-                  ? "bg-primary text-white border-primary" 
-                  : "bg-secondary text-primary-text border-accent/30 hover:border-accent"
-              }`}
-            >
-              {formatQuantity(w, 'kg')}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* 2. Precision Stepper */}
+      {/* Precision Stepper */}
       <div className="flex items-center justify-between bg-white rounded-xl border border-secondary p-1 shadow-sm">
         <button
           type="button"
