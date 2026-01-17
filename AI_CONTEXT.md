@@ -92,8 +92,8 @@ interface Product {
   imageUrl: string;
   isAvailable: boolean;
   unit: Unit;
-  minOrder?: number;   // e.g., 0.25 for kg
-  step?: number;       // e.g., 0.25 for increments
+  minOrder: number;    // Required: e.g., 0.25 for kg, 1 for piece
+  step: number;        // Required: e.g., 0.25 for kg
 }
 
 interface CartItem extends Product {
@@ -209,8 +209,9 @@ generateWhatsAppLink(cart: CartItem[], total: number): string
 | Component | Type | Purpose |
 |-----------|------|---------|
 | `Header` | Client | Logo + Cart icon (with bounce animation) |
-| `CartSidebar` | Client | Cart items list + WhatsApp checkout |
-| `ProductCard` | Client | Product display + qty selector + fly animation |
+| `CartSidebar` | Client | Cart items list + QuantitySelector |
+| `ProductCard` | Client | Product display + QuantitySelector + fly animation |
+| `QuantitySelector` | Client | Smart stepper for weight/unit increments |
 | `FlyToCartPortal` | Client | Renders flying elements on add-to-cart |
 | `app/page.tsx` | Server | Product grid (SEO optimized) |
 | `app/layout.tsx` | Server | Root layout with providers |
