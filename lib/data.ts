@@ -21,8 +21,8 @@ export const products: Product[] = [
     imageUrl: "/images/romy-cheese.jpg",
     isAvailable: true,
     unit: "kg",
-    minOrder: 0.125, // Eighth (thumn)
-    step: 0.125
+    minOrder: 0.25, // Eighth (thumn)
+    step: 0.25
   },
   {
     id: "8",
