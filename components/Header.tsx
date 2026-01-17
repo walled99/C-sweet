@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Header() {
   const { itemsCount, openCart, cartIconRef, isBouncing } = useCart();
@@ -10,8 +11,15 @@ export default function Header() {
     <header className="sticky top-0 z-40 w-full bg-primary text-secondary shadow-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo / Brand */}
-        <div className="text-2xl font-bold">
-          C-Sweet <span className="text-accent">Shop</span>
+        <div className="flex items-center">
+          <Image 
+            src="/images/logo.png" 
+            alt="C-Sweet Shop" 
+            width={120} 
+            height={48} 
+            priority
+            className="h-12 w-auto object-contain"
+          />
         </div>
 
         {/* Cart Trigger */}
