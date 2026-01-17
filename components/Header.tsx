@@ -13,9 +13,9 @@ export default function Header() {
         {/* Logo / Brand */}
         <div className="flex items-center">
           <Image 
-            src="/images/logo.png" 
+            src="/images/C-Sweet-logo.png" 
             alt="C-Sweet Shop" 
-            width={120} 
+            width={180} 
             height={48} 
             priority
             className="h-12 w-auto object-contain"
