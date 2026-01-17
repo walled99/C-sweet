@@ -7,7 +7,7 @@ export const products: Product[] = [
     name: "جبنة بيضاء", // White Cheese
     price: 120,
     category: "cheese_milk",
-    imageUrl: "/images/white-cheese.png",
+    imageUrl: "/images/white-cheese.jpg",
     isAvailable: true,
     unit: "kg",
     minOrder: 0.25,
@@ -18,7 +18,7 @@ export const products: Product[] = [
     name: "جبنة رومي", // Romy Cheese
     price: 240,
     category: "cheese_milk",
-    imageUrl: "/images/romy-cheese.png",
+    imageUrl: "/images/romy-cheese.jpg",
     isAvailable: true,
     unit: "kg",
     minOrder: 0.125, // Eighth (thumn)
@@ -29,7 +29,7 @@ export const products: Product[] = [
     name: "حليب كامل الدسم", // Full Cream Milk
     price: 45,
     category: "cheese_milk",
-    imageUrl: "/images/logo.png", // Placeholder
+    imageUrl: "/images/milk.jpg",
     isAvailable: true,
     unit: "pack",
     minOrder: 1,
@@ -42,7 +42,7 @@ export const products: Product[] = [
     name: "مناقيش زعتر", // Manakish Zaatar
     price: 15,
     category: "sweet",
-    imageUrl: "/images/manakish.png",
+    imageUrl: "/images/manakish.jpg",
     isAvailable: true,
     unit: "piece",
     minOrder: 1,
@@ -53,7 +53,7 @@ export const products: Product[] = [
     name: "كنافة بالمكسرات", // Kunafa Nuts
     price: 160,
     category: "sweet",
-    imageUrl: "/images/kunafa.png",
+    imageUrl: "/images/kunafa.jpg",
     isAvailable: true,
     unit: "kg",
     minOrder: 0.5,
@@ -64,7 +64,7 @@ export const products: Product[] = [
     name: "كرواسون زبدة", // Butter Croissant
     price: 35,
     category: "sweet",
-    imageUrl: "/images/croissant.png",
+    imageUrl: "/images/croissant.jpg",
     isAvailable: true,
     unit: "piece",
     minOrder: 1,
@@ -77,7 +77,7 @@ export const products: Product[] = [
     name: "أرز مصري (1 كجم)", // Egyptian Rice
     price: 35,
     category: "supermarket",
-    imageUrl: "/images/logo.png", // Placeholder
+    imageUrl: "/images/rice.jpg",
     isAvailable: true,
     unit: "pack",
     minOrder: 1,
@@ -88,7 +88,7 @@ export const products: Product[] = [
     name: "ملوخية مجمدة", // Frozen Molokhia
     price: 15,
     category: "freezing",
-    imageUrl: "/images/logo.png", // Placeholder
+    imageUrl: "/images/molokhia.jpg",
     isAvailable: true,
     unit: "pack",
     minOrder: 1,
