@@ -12,9 +12,9 @@
 |-----|-------|
 | Name | C-Sweet Shop |
 | Type | E-Commerce MVP |
-| Framework | Next.js 16+ (App Router) |
-| Language | TypeScript (Strict) |
-| Styling | Tailwind CSS 4 |
+| Framework | Next.js 15+ (App Router) |
+| Backend | Supabase |
+| Images | Supabase Storage |
 | UI Direction | RTL (Arabic-First) |
 | Checkout | WhatsApp Integration |
 
@@ -36,7 +36,8 @@ e:/C-Sweet/
 ├── context/
 │   └── CartContext.tsx     # Cart state management + localStorage
 ├── lib/
-│   ├── data.ts             # Static product data (replace with API later)
+│   ├── supabase.ts         # Supabase client initialization
+│   ├── data.ts             # Data fetching (Products from Supabase)
 │   ├── localization.ts     # Arabic unit/currency labels
 │   └── whatsappUtils.ts    # WhatsApp message generator
 ├── types/
@@ -102,9 +103,10 @@ interface CartItem extends Product {
 }
 ```
 
-### 4.2 Unit Logic
-- `kg` / `g`: Decimal quantities allowed. Use `step` for increments.
-- `piece` / `pack`: Integer quantities only.
+### 4.2 Data Flow
+- **Products**: Fetched via `getProducts()` in `lib/data.ts` using `@supabase/supabase-js`.
+- **Images**: Loaded via Public URLs from Supabase Storage `product-images` bucket.
+- **Orders**: (Planned) Stored in Supabase `orders` table before WhatsApp redirection.
 
 ---
 

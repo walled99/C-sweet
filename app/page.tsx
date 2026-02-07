@@ -1,7 +1,9 @@
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/data";
+import { getProducts } from "@/lib/data";
 
-export default function Home() {
+export default async function Home() {
+  const products = await getProducts();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 text-center">

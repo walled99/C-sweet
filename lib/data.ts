@@ -1,97 +1,32 @@
 import { Product } from '@/types';
+import { supabase } from './supabase';
 
-export const products: Product[] = [
-  // --- Dairy & Cheese ---
-  {
-    id: "1",
-    name: "جبنة بيضاء", // White Cheese
-    price: 120,
-    category: "cheese_milk",
-    imageUrl: "/images/white-cheese.jpg",
-    isAvailable: true,
-    unit: "kg",
-    minOrder: 0.25,
-    step: 0.25
-  },
-  {
-    id: "3",
-    name: "جبنة رومي", // Romy Cheese
-    price: 240,
-    category: "cheese_milk",
-    imageUrl: "/images/romy-cheese.jpg",
-    isAvailable: true,
-    unit: "kg",
-    minOrder: 0.25, // Eighth (thumn)
-    step: 0.25
-  },
-  {
-    id: "8",
-    name: "حليب كامل الدسم", // Full Cream Milk
-    price: 45,
-    category: "cheese_milk",
-    imageUrl: "/images/Milk.jpg",
-    isAvailable: true,
-    unit: "pack",
-    minOrder: 1,
-    step: 1
-  },
+export async function getProducts(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('is_available', true);
 
-  // --- Sweets & Bakery ---
-  {
-    id: "2",
-    name: "مناقيش زعتر", // Manakish Zaatar
-    price: 15,
-    category: "sweet",
-    imageUrl: "/images/manakish.jpg",
-    isAvailable: true,
-    unit: "piece",
-    minOrder: 1,
-    step: 1
-  },
-  {
-    id: "4",
-    name: "كنافة بالمكسرات", // Kunafa Nuts
-    price: 160,
-    category: "sweet",
-    imageUrl: "/images/kunafa.jpg",
-    isAvailable: true,
-    unit: "kg",
-    minOrder: 0.5,
-    step: 0.5
-  },
-  {
-    id: "5",
-    name: "كرواسون زبدة", // Butter Croissant
-    price: 35,
-    category: "sweet",
-    imageUrl: "/images/croissant.jpg",
-    isAvailable: true,
-    unit: "piece",
-    minOrder: 1,
-    step: 1
-  },
-
-  // --- Supermarket & Freezing ---
-  {
-    id: "6",
-    name: "أرز مصري (1 كجم)", // Egyptian Rice
-    price: 35,
-    category: "supermarket",
-    imageUrl: "/images/Rice.jpg",
-    isAvailable: true,
-    unit: "pack",
-    minOrder: 1,
-    step: 1
-  },
-  {
-    id: "7",
-    name: "ملوخية مجمدة", // Frozen Molokhia
-    price: 15,
-    category: "freezing",
-    imageUrl: "/images/Molokhia.jpg",
-    isAvailable: true,
-    unit: "pack",
-    minOrder: 1,
-    step: 1
+  if (error) {
+    console.error('Error fetching products:', error);
+    return [];
   }
+
+  return (data || []).map(product => ({
+    id: String(product.id),
+    name: product.name,
+    price: Number(product.price),
+    category: product.category,
+    imageUrl: product.image_url,
+    isAvailable: product.is_available,
+    unit: product.unit,
+    minOrder: Number(product.min_order),
+    step: Number(product.step)
+  }));
+}
+
+// Keep the old array for backward compatibility during migration if needed, 
+// but we will eventually replace all imports.
+export const staticProducts: Product[] = [
+  // ... current products ...
 ];
