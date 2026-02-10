@@ -12,7 +12,15 @@ create table products (
   id uuid default gen_random_uuid() primary key,
   name text not null,
   price numeric not null,
-  category text check (category in ('sweet', 'supermarket', 'freezing', 'cheese_milk')),
+  category text check (category in (
+    'coffee_roastery', 'nuts', 'cheese', 'halva_jam', 'olives_pickles', 
+    'appetizers_salads', 'luncheon_cold_cuts', 'ready_to_cook', 'sweets', 
+    'kibbeh_sambousek', 'dried_fruits', 'bakery', 'oil_ghee', 'zaatar_legumes', 
+    'snacks', 'spices_seasonings', 'hospitality', 'honey', 'ice_cream_cake', 
+    'dates', 'yamish', 'pancake_waffle_crepe', 'home_made', 'arabic_ice_cream', 
+    'cakes', 'sandwiches'
+  )),
+
   image_url text,
   is_available boolean default true,
   unit text check (unit in ('kg', 'g', 'piece', 'pack')),
@@ -62,3 +70,16 @@ create policy "Allow internal insert access" on orders
 1. **Bucket Name**: `product-images`
 2. **Access**: Public
 3. **Policy**: Give public read access to all users.
+
+## 4. Initial Seeding
+
+To populate the database with sample products for all categories, run the following command:
+
+```bash
+npx tsx lib/seed.ts
+```
+
+This script will:
+1. Clear existing products (optional, check script logic).
+2. Insert 26 sample products, one for each category defined in `types/index.ts`.
+3. Use existing placeholders from `/public/images` for testing.

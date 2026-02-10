@@ -9,6 +9,10 @@ A modern, Arabic-first E-Commerce MVP for selling sweets and groceries with seam
 - **Backend**: Supabase (PostgreSQL + Storage)
 - **Animations**: Framer Motion
 - **Checkout**: WhatsApp Integration
+- **Features**: 
+    - Premium Category Filter (PC Arrows, Grab-to-Scroll)
+    - Mobile Optimized (Auto-centering, Edge Fades)
+    - Dynamic RTL Support
 
 ## 🛠️ Getting Started
 

@@ -30,6 +30,7 @@ e:/C-Sweet/
 │   └── globals.css         # Tailwind Theme Config
 ├── components/             # UI Components
 │   ├── Header.tsx          # Sticky header with cart icon (uses Framer Motion)
+│   ├── CategoryFilter.tsx  # Dynamic category bar with modern scroll features
 │   ├── CartSidebar.tsx     # Slide-over cart panel
 │   ├── ProductCard.tsx     # Product display with qty selector
 │   └── FlyToCart.tsx       # Fly-to-cart animation portal
@@ -83,7 +84,14 @@ Defined in `app/globals.css`:
 
 ### 4.1 Types (`types/index.ts`)
 ```typescript
-type Category = 'sweet' | 'supermarket' | 'freezing' | 'cheese_milk';
+type Category = 
+  | 'coffee_roastery' | 'nuts' | 'cheese' | 'halva_jam' | 'olives_pickles' 
+  | 'appetizers_salads' | 'luncheon_cold_cuts' | 'ready_to_cook' | 'sweets' 
+  | 'kibbeh_sambousek' | 'dried_fruits' | 'bakery' | 'oil_ghee' | 'zaatar_legumes' 
+  | 'snacks' | 'spices_seasonings' | 'hospitality' | 'honey' | 'ice_cream_cake' 
+  | 'dates' | 'yamish' | 'pancake_waffle_crepe' | 'home_made' | 'arabic_ice_cream' 
+  | 'cakes' | 'sandwiches';
+
 type Unit = 'kg' | 'g' | 'piece' | 'pack';
 
 interface Product {
@@ -216,7 +224,8 @@ generateWhatsAppLink(cart: CartItem[], total: number): string
 | `ProductCard` | Client | Product display + QuantitySelector + fly animation |
 | `QuantitySelector` | Client | Smart stepper for weight/unit increments |
 | `FlyToCartPortal` | Client | Renders flying elements on add-to-cart |
-| `app/page.tsx` | Server | Product grid (SEO optimized) |
+| `CategoryFilter` | Client | Dynamic category bar with arrows, drag-scroll, and auto-centering |
+| `app/page.tsx` | Server | Product grid + Category filtering (SEO optimized) |
 | `app/layout.tsx` | Server | Root layout with providers |
 
 ---
@@ -233,7 +242,6 @@ npm run lint     # ESLint check
 
 ## 11. Future Considerations
 - [ ] Replace `lib/data.ts` with API/CMS fetch.
-- [ ] Add category filtering.
 - [ ] Implement search functionality.
 - [ ] Add order history (requires backend).
 
